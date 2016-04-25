@@ -1,0 +1,15 @@
+declare
+i integer; --定义变量
+begin
+i := 1000007;
+loop
+/* 插入数据 */
+INSERT INTO "INPADM"."TABLE1" 
+VALUES ('1'+i, '2'+i, '3'+i, '4'+i, '5'+i,'6'+i,'7'+i);
+/* 参数递增 */
+i := i + 1;
+/* 停止条件*/
+exit when i > 100000006;
+end loop;
+commit;
+end;
