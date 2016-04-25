@@ -1,0 +1,100 @@
+//不适合多线程
+public static Map<String, Map<String, String>> getOldVisitors(){
+
+		//每次查询的记录数
+		int pagesize = 100000;
+
+		//mongodb中的"_id"
+		String objectId = "";
+
+		//方法的返回值类型，此处用的google guava
+		Map<String, Map<String, String>> mapless = null;
+
+		//查询的条件
+		BasicDBObject queryless = new BasicDBObject();
+
+		//初始化返回的mongodb集合操作对象，大家可以写个数据连接池
+		MongoCredential credential = MongoCredential.createCredential("mongodb", "sync", "123456".toCharArray());
+		ServerAddress serverAddress = new ServerAddress("localhost", 27017);
+		MongoClient mongoClient = new MongoClient(serverAddress, Arrays.asList(credential));
+		DB db = mongoClient.getDB("sync");
+		DBCollection dbCol = db.getCollection("PATS_IN_HOSPITAL");
+
+		//查询指定字段，字段越少，查询越快，当然都是一些不必要字段
+		//field.put("uuid",1);
+
+		//fields.put("uuid", 1);
+
+		//fields.put("initTime", 1);
+
+		//小于指定日期的条件
+		//String conditionless = TimeCond.getTimeCondless(date);
+
+		//queryless.put("$where", conditionless);
+
+		DBCursor cursorless = dbCol.find();
+
+		//MongoDB在小于指定日期条件下，集合总大小
+		int countless = cursorless.count();
+
+		//查询遍历的次数 circleCountless+1
+		int circleCountless = countless/pagesize;
+
+		//取模，这是最后一次循环遍历的次数
+		int modless = countless%pagesize;
+
+		//开始遍历查询
+		for (int i = 1; i <=circleCountless+1; i++) {
+
+			//文档对象
+			DBObject obj = null;
+
+			//将游标中返回的结果记录到list集合中，为什么放到list集合中？这是为后面guava 分组做准备
+			List<Map<String, String>> listOfMaps = new ArrayList();
+
+			//如果条件不为空，则加上此条件，构成多条件查询，这一步是分页的关键
+			if (!"".equals(objectId)) {
+
+				//我们通过文档对象obj.get("_id")返回的是不带ObjectId(),所以要求此步骤
+				ObjectId id = new ObjectId(objectId);
+
+				queryless.append("_id", new BasicDBObject("$gt",id));
+
+			}
+
+			if (i<circleCountless+1) {
+
+				cursorless = dbCol.find(queryless).sort(new BasicDBObject("_id", 1)).limit(pagesize);
+
+			}else if(i==circleCountless+1){//最后一次循环
+
+				cursorless = dbCol.find(queryless).limit(modless);
+			}
+
+			//将游标中返回的结果记录到list集合中，为什么放到list集合中？这是为后面guava 分组做准备
+			while (cursorless.hasNext()) {
+
+				obj = cursorless.next();
+
+				listOfMaps.add((Map<String, String>) obj);
+
+			}
+			//获取一次分页中最后一条记录的"_id"，然后作为条件传入到下一个循环中
+			if (null!=obj) {
+
+				objectId = obj.get("_id").toString();
+
+			}
+			/*//第一次分组，根据uuid分组,分组除今天之外的历史数据
+			mapless = Multimaps.index(
+					listOfMaps,new Function<Map<String, String>, String>() {
+						public String apply(final Map<String, String> from) {
+
+							return from.get("uuid");
+						}
+					});*/
+
+		}
+
+		return mapless;
+	}
