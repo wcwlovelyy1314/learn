@@ -1,0 +1,10 @@
+使用find的第二个重载可以过滤：
+> db.person.insert({"name":"hxc","address":[{"p":"anhui"}]})
+> db.person.find()
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc", "address" : [ { "p" : "anhui" } ] }
+> db.person.find({},{"name":1})
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc" }
+> db.person.find({},{"address.p":0})
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc", "address" : [ { } ] }
+> db.person.find({},{"address":0})
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc" }
