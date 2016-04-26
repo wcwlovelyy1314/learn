@@ -1,0 +1,7 @@
+mongo数据库的连接：./bin/mongo 127.0.0.1:12345
+show dbs
+use imooc 切换/创建
+db.dropDatabase()
+db.imooc_collection.insert({x:1})
+show collections
+db.imooc_collection.find()
