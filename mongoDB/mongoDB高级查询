@@ -1,0 +1,31 @@
+一： 聚合
+
+      常见的聚合操作跟sql server一样，有：count，distinct，group，mapReduce。
+  （1）count
+   db.user.count()
+   db.user.count({"age":20})
+   (2)distinct
+   db.user.distinct("age")
+   (3)group
+   
+   
+   
+   
+   
+   
+   
+我现在在使用mongodb，里面有这样的一个设计
+一个文章-------》多个评论
+评论是文章的子文档
+现在有一个需求，我要取出十篇文章，但是我不想取出文章的子文档。请问，应该怎么做?
+
+   使用find的第二个重载可以过滤：
+> db.person.insert({"name":"hxc","address":[{"p":"anhui"}]})
+> db.person.find()
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc", "address" : [ { "p" : "anhui" } ] }
+> db.person.find({},{"name":1})
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc" }
+> db.person.find({},{"address.p":0})
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc", "address" : [ { } ] }
+> db.person.find({},{"address":0})
+{ "_id" : ObjectId("4f5882d9a6cd80a5c972f45f"), "name" : "hxc" }
