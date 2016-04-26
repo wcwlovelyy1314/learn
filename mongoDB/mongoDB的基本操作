@@ -5,3 +5,71 @@ db.dropDatabase()
 db.imooc_collection.insert({x:1})
 show collections
 db.imooc_collection.find()
+
+--Find操作
+常开发中，我们玩查询，玩的最多的也就是二类：
+
+①： >($gt), >=($gte), <($lt), <=($lte), !=($ne), =()。
+
+//find age >22
+db.user.find({"age":{$gt:22}})
+//find age >=22
+db.user.find({"age":{$gte:22}})
+//find age <22
+db.user.find({"age":{$lt:22}})
+//find age <=22
+db.user.find({"age":{$lte:22}})
+
+②：And()，OR($or)，In($in)，NotIn($nin)
+//find name='aa' && age=20
+db.user.find({"name":"aa","age":20})
+//find name='aa' || name='bb'
+db.user.find({$or:[{"name":"aa","name":"bb"}]})
+//find name in ["aa","bb"]
+db.user.find({"name":{$in:["aa","bb"]}})
+
+// 在mongodb中还有一个特殊的匹配，那就是“正则表达式”，这玩意威力很强的。
+//find name startwith 'j' and endwith 'e'
+db.user.find({"name":/^j/,"name":/e$/})
+//有时查询很复杂，很蛋疼，不过没关系，mongodb给我们祭出了大招，它就是$where，为什么这么说，是因为$where中的value
+  就是我们非常熟悉，非常热爱的js来助我们一马平川。
+  //find name ='aa'
+  db.user.find({$where:function(){
+  return this.name =='aa'}})
+ 三：Update操作
+
+      更新操作无非也就两种，整体更新和局部更新，使用场合相信大家也清楚。
+
+  <1> 整体更新
+       
+  <2> 局部更新
+
+        有时候我们仅仅需要更新一个字段，而不是整体更新，那么我们该如何做呢？easy的问题，mongodb中已经给我们提供了两个
+
+   修改器： $inc 和 $set。
+
+   ①  $inc修改器
+
+       $inc也就是increase的缩写，学过sql server 的同学应该很熟悉，比如我们做一个在线用户状态记录，每次修改会在原有的基础上
+
+    自增$inc指定的值，如果“文档”中没有此key，则会创建key，下面的例子一看就懂。
+    db.user.update({"name":"aa"},{$inc:{"age":20}})//原来age=10，现在变成30
+    
+ ② $set修改器
+  db.user.update({"name":"aa"},{$set:{"age":20}})//原来age=10，现在变成20
+
+ <3> upsert操作
+
+     这个可是mongodb创造出来的“词”，大家还记得update方法的第一次参数是“查询条件”吗？，那么这个upsert操作就是说：如果我
+
+没有查到，我就在数据库里面新增一条，其实这样也有好处，就是避免了我在数据库里面判断是update还是add操作，使用起来很简单
+
+将update的第三个参数设为true即可。
+db.user.update({"name":"aaa"},{$set:{"age":20}},true)
+  
+
+ <4> 批量更新
+
+     在mongodb中如果匹配多条，默认的情况下只更新第一条，那么如果我们有需求必须批量更新，那么在mongodb中实现也是很简单
+
+的，在update的第四个参数中设为true即可。例子就不举了。
