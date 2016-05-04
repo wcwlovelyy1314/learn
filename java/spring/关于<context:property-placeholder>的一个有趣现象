@@ -1,0 +1,169 @@
+A模块和B模块都分别拥有自己的Spring XML配置，并分别拥有自己的配置文件：
+
+A模块
+
+A模块的Spring配置文件如下:
+Xml代码  收藏代码
+
+    <?xml version="1.0" encoding="UTF-8" ?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+           xmlns:context="http://www.springframework.org/schema/context"  
+           xmlns:p="http://www.springframework.org/schema/p"  
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans
+           /spring-beans-3.2.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">  
+       <context:property-placeholder location="classpath*:conf/conf_a.properties"/>  
+       <bean class="com.xxx.aaa.Bean1"  
+              p:driverClassName="${modulea.jdbc.driverClassName}"  
+              p:url="${modulea.jdbc.url}"  
+              p:username="${modulea.jdbc.username}"  
+              p:password="${modulea.jdbc.password}"/>  
+    </beans>  
+
+
+其配置文件位于类路径conf/conf_a.properties中：
+Xml代码  收藏代码
+
+    modulea.jdbc.driverClassName=com.mysql.jdbc.Driver  
+    modulea.jdbc.username=cartan  
+    modulea.jdbc.password=superman  
+    modulea.jdbc.url=jdbc:mysql://127.0.0.1:3306/modulea?useUnicode=true&characterEncoding=utf8  
+
+
+
+B模块
+
+B模块的Spring配置文件如下:
+Xml代码  收藏代码
+
+    <?xml version="1.0" encoding="UTF-8" ?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+           xmlns:context="http://www.springframework.org/schema/context"  
+           xmlns:p="http://www.springframework.org/schema/p"  
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.
+           org/schema/beans/spring-beans-3.2.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/
+           spring-context-3.2.xsd">  
+       <context:property-placeholder location="classpath*:conf/conf_b.properties"/>  
+       <bean class="com.xxx.bbb.Bean1"  
+              p:driverClassName="${moduleb.jdbc.driverClassName}"  
+              p:url="${moduleb.jdbc.url}"  
+              p:username="${moduleb.jdbc.username}"  
+              p:password="${moduleb.jdbc.password}"/>  
+    </beans>  
+
+
+其配置文件位于类路径conf/conf_b.properties中：
+Java代码  收藏代码
+
+    moduleb.jdbc.driverClassName=com.mysql.jdbc.Driver  
+    moduleb.jdbc.username=cartan  
+    moduleb.jdbc.password=superman  
+    moduleb.jdbc.url=jdbc:mysql://127.0.0.1:3306/modulea?useUnicode=true&characterEncoding=utf8  
+
+
+
+问题来了
+
+单独运行A模块，或单独运行B模块都是正常的，但将A和B两个模块集成后运行，Spring容器就启动不了了：
+
+引用
+Could not resolve placeholder 'moduleb.jdbc.driverClassName' in string value "${moduleb.jdbc.driverClassName}"
+
+
+
+到底出了啥问题
+
+随便搜索了一下，还发现很多人遇到这个问题，这个就是来自stackoverflow的问题：
+http://stackoverflow.com/questions/7940452/spring-application-context-not-able-to-load-property-placeholder-properties
+
+可惜啊，好像都没有人给出正确的解决。
+
+那究竟是什么问题呢？也想了很久哦....终于回想起来了(写书时读过Spring源码)，原来是Spring容器采用反射扫描的发
+现机制，在探测到Spring容器中有一个org.springframework.beans.factory.config.PropertyPlaceholderConfigurer的
+Bean就会停止对剩余PropertyPlaceholderConfigurer的扫描（Spring 3.1已经使用PropertySourcesPlaceholderConfigur
+er替代PropertyPlaceholderConfigurer了）。
+
+而<context:property-placeholder/>这个基于命名空间的配置，其实内部就是创建一个PropertyPlaceholderConfigurer
+Bean而已。换句话说，即Spring容器仅允许最多定义一个PropertyPlaceholderConfigurer(或<context:property-placeholder/>)
+，其余的会被Spring忽略掉（其实Spring如果提供一个警告就好了）。
+
+拿上来的例子来说，如果A和B模块是单独运行的，由于Spring容器都只有一个PropertyPlaceholderConfigurer，
+因此属性文件会被正常加载并替换掉。如果A和B两模块集成后运行，Spring容器中就有两个PropertyPlaceholderConfigurer 
+Bean了，这时就看谁先谁后了， 先的保留，后的忽略！因此，只加载到了一个属性文件，因而造成无法正确进行属性替换的问题。
+
+咋解决呢？
+
+定位问题需要9999元钱，解决问题只需要1元钱 。
+属性文件加载在统一的地方做，不要分模块加载即可。
+
+A模块a.xml：
+Xml代码  收藏代码
+
+    <?xml version="1.0" encoding="UTF-8" ?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+           xmlns:context="http://www.springframework.org/schema/context"  
+           xmlns:p="http://www.springframework.org/schema/p"  
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/
+           beans/spring-beans-3.2.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-co
+           ntext-3.2.xsd">  
+       <!--<context:property-placeholder location="classpath*:conf/conf_a.properties"/>-->  
+       <bean class="com.xxx.aaa.Bean1"  
+              p:driverClassName="${modulea.jdbc.driverClassName}"  
+              p:url="${modulea.jdbc.url}"  
+              p:username="${modulea.jdbc.username}"  
+              p:password="${modulea.jdbc.password}"/>  
+    </beans>  
+
+
+
+B模块b.xml：
+Xml代码  收藏代码
+
+    <?xml version="1.0" encoding="UTF-8" ?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+           xmlns:context="http://www.springframework.org/schema/context"  
+           xmlns:p="http://www.springframework.org/schema/p"  
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/
+           schema/beans/spring-beans-3.2.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spri
+           ng-context-3.2.xsd">  
+       <!--<context:property-placeholder location="classpath*:conf/conf_b.properties"/>-->  
+       <bean class="com.xxx.bbb.Bean1"  
+              p:driverClassName="${moduleb.jdbc.driverClassName}"  
+              p:url="${moduleb.jdbc.url}"  
+              p:username="${moduleb.jdbc.username}"  
+              p:password="${moduleb.jdbc.password}"/>  
+    </beans>  
+
+
+
+集成：
+Xml代码  收藏代码
+
+    <?xml version="1.0" encoding="UTF-8" ?>  
+    <beans xmlns="http://www.springframework.org/schema/beans"  
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+           xmlns:context="http://www.springframework.org/schema/context"  
+           xmlns:p="http://www.springframework.org/schema/p"  
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org
+           /schema/beans/spring-beans-3.2.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/
+           spring-context-3.2.xsd">  
+       <context:property-placeholder location="classpath*:conf/conf*.properties"/>  
+       <import resource="a.xml"/>  
+       <import resource="b.xml"/>  
+    </beans>  
+
+
+进一步思考
+
+为什么啊？Spring为什么要这样呢？细想想是有道理的，一个项目或一个系统的配置应该放在一起，不宜分散。
+这样才可以做到统一管控，否则到处都有配置，到底是加载哪个配置文件呢？有时你还会不小心让JAR中的Spring
+配置文件加载一个位于JAR中的属性文件，而外面有更改不了。如果Spring使用了这种机制，即使JAR包中的Spring配置
+文件使用<context:property-placeholder/>引用到JAR中的属性文件，只要你要外而的Spring配置文件中显示提供一个<context:property-placeholder/>指定另一个属性文件 ，就可以覆盖JAR中的默认配置了。 
