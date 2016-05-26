@@ -19,8 +19,9 @@ _斜体_
   1. list1
     2. list2
     3. list3
-- [ ] a task list item
-- [ ] list syntax required
-- [ ] normal **formatting**, @mentions, #1234 refs
-- [ ] incomplete
-- [x] completed
+- [x] checkbox1
+- [ ] checkbox2
+- [ ] checkbox3
+- [ ] checkbox4
+- [x] checkbox5
+@github/support
