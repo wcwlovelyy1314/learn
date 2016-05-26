@@ -1,3 +1,4 @@
+#21天计划：第一天
 #只有.md文件才能用markdown语法
 #一级标题
 一级标题
@@ -26,3 +27,21 @@ _斜体_
 - [x] checkbox5<br>
 
 @github What do you think about these updates?
+
+
+Server | Intranet | IP | GateWay | NetMask | SSH
+--- | --- | --- | --- | --- | ---
+NCD | 外网 | 10.40.1.12 | 10.40.35.1 | 255.255.0.0 | 10001
+NCD | 内网 | | | |
+NCD-SYNC | 外网 | 10.40.1.11 | 10.40.35.1 | 255.255.0.0 | 10002
+NCD-SYNC | 内网 | | | |
+NCD-SYNC | 内网 | | | |
+NCD-SYNC | 内网 | | | |
+NCD-SYNC | 内网 | | | |
+
+
+
+list1 | list2 | list3 |list4
+--- | --- | --- | ---
+1 | 2 | |
+11 | 22 | |
