@@ -1,3 +1,4 @@
+psql -U postgres -d postgres
 -  SELECT <br>
     pg_terminate_backend(pid) <br>
 FROM <br>
