@@ -1,7 +1,8 @@
 
 MongoDB 备份(mongodump)与恢复(mongorerstore)
 MongoDB数据备份
-
+#不需要连接mongo数据库，直接输入命令：mongodump -h 127.0.0.1 -d test -o /home/wcw/Documents
+#不需要连接mongo数据库,直接输入命令：mongorestore -h 127.0.0.1 -d sync --dir /home/wcw/sync
 在Mongodb中我们使用mongodump命令来备份MongoDB数据。该命令可以导出所有数据到指定目录中。
 
 mongodump命令可以通过参数指定导出的数据量级转存的服务器。
