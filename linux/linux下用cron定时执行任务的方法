@@ -43,7 +43,8 @@ crontab 是用来让使用者在固定时间或固定间隔执行程序之用，
 
 参数 :
 
-crontab -e : 执行文字编辑器来设定时程表，内定的文字编辑器是 VI，如果你想用别的文字编辑器，则请先设定 VISUAL 环境变数来指定使用那个文字编辑器(比如说 setenv VISUAL joe)
+crontab -e : 执行文字编辑器来设定时程表，内定的文字编辑器是 VI，如果你想用别的文字编辑器，则请先设定 VISUAL 环境变数来指定使用
+那个文字编辑器(比如说 setenv VISUAL joe)
 
 crontab -r : 删除目前的时程表
 
@@ -87,7 +88,8 @@ f1 f2 f3 f4 f5 program
 
 注意 :
 
-当程序在你所指定的时间执行后，系统会寄一封信给你，显示该程序执行的内容，若是你不希望收到这样的信，请在每一行空一格之后加上 > /dev/null 2>&1 即可
+当程序在你所指定的时间执行后，系统会寄一封信给你，显示该程序执行的内容，若是你不希望收到这样的信，
+请在每一行空一格之后加上 > /dev/null 2>&1 即可
 
 例子2 :
 
@@ -115,7 +117,9 @@ f1 f2 f3 f4 f5 program
 
 $crontab -l 列出用户目前的crontab.
 
-/usr/lib/cron/cron.allow表示谁能使用crontab命令。如果它是一个空文件表明没有一个用户能安排作业。如果这个文件不存在，而有另外一个文件/usr/lib/cron/cron.deny,则只有不包括在这个文件中的用户才可以使用crontab命令。如果它是一个空文件表明任何用户都可安排作业。两个文件同时存在时cron.allow优先，如果都不存在，只有超级用户可以安排作业。
+/usr/lib/cron/cron.allow表示谁能使用crontab命令。如果它是一个空文件表明没有一个用户能安排作业。如果这个文件不存在，
+而有另外一个文件/usr/lib/cron/cron.deny,则只有不包括在这个文件中的用户才可以使用crontab命令。
+如果它是一个空文件表明任何用户都可安排作业。两个文件同时存在时cron.allow优先，如果都不存在，只有超级用户可以安排作业。
 
 crontab文件的一些例子：
 
@@ -188,7 +192,8 @@ crontab文件的一些例子：
 
 2.编辑/etc/crontab 文件配置cron
 
-cron 服务每分钟不仅要读一次/var/spool/cron内的所有文件，还需要读一次/etc/crontab,因此我们配置这个文件也能运用cron服务做一些事情。用crontab配置是针对某个用户的，而编辑/etc/crontab是针对系统的任务。此文件的文件格式是：
+cron 服务每分钟不仅要读一次/var/spool/cron内的所有文件，还需要读一次/etc/crontab,因此我们配置这个文件也能运用cron服务
+做一些事情。用crontab配置是针对某个用户的，而编辑/etc/crontab是针对系统的任务。此文件的文件格式是：
 
 SHELL=/bin/bash
 
@@ -364,7 +369,10 @@ crontab用法
 0 */2 * * * echo "Have a break now." >> /tmp/test.txt晚上11点到早上8点之间每两个小时，早上八点 
 0 23-7/2，8 * * * echo "Have a good dream：）" >> /tmp/test.txt每个月的4号和每个礼拜的礼拜一到礼拜三的早上11点 
 0 11 4 * 1-3 command line1月1日早上4点 
-0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/        //使用者运行的路径,这里是根目录 # run-parts 01 * * * * root run-parts /etc/cron.hourly //每小时执行/etc/cron.hourly内的脚本 02 4 * * * root run-parts /etc/cron.daily //每天执行/etc/cron.daily内的脚本 22 4 * * 0 root run-parts /etc/cron.weekly //每星期执行/etc/cron.weekly内的脚本 42 4 1 * * root run-parts /etc/cron.monthly //每月去执行/etc/cron.monthly内的脚本 大家注意"run-parts"这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名了。 　 
+0 4 1 1 * command line SHELL=/bin/bash PATH=/sbin:/bin:/usr/sbin:/usr/bin MAILTO=root //如果出现错误，或者有数据输出，数据作为邮件发给这个帐号 HOME=/    
+//使用者运行的路径,这里是根目录 # run-parts 01 * * * * root run-parts /etc/cron.hourly //每小时执行/etc/cron.hourly内的脚本 02 4 * * * root run-parts /etc/cron.daily 
+//每天执行/etc/cron.daily内的脚本 22 4 * * 0 root run-parts /etc/cron.weekly //每星期执行/etc/cron.weekly内的脚本 42 4 1 * * root run-parts /etc/cron.monthly 
+//每月去执行/etc/cron.monthly内的脚本 大家注意"run-parts"这个参数了，如果去掉这个参数的话，后面就可以写要运行的某个脚本名，而不是文件夹名了。 　 
 这就是表示任意天任意月，其实就是每天的下午4点、5点、6点的5 min、15 min、25 min、35 min、45 min、55 min时执行命令。 
 5，15，25，35，45，55 16，17，18 * * * command在每周一，三，五的下午3：00系统进入维护状态，重新启动系统。那么在crontab 文件中就应该写入如下字段： 
 　　00 15 * * 1，3，5 shutdown -r +5然后将该文件存盘为foxy.cron，再键入crontab foxy.cron安装该文件。 
@@ -375,6 +383,13 @@ crontab用法
 每年的一月和四月，4号到9号的3点12分和3点55分执行/bin/rm -f expire.1st这个指令，并把结果添加在mm.txt这个文件之后（mm.txt文件位于用户自己的目录位置）。 
 　　12,55 3 4-9 1,4 * /bin/rm -f expire.1st$#@62;$#@62;mm.txt
 
-crontab的正确用法(简短节省大家时间)命令： 1 man cron 2 man crontab 3 man 5 crontab ==> 中间有个5。命令"crontab -e": -------------------------------------------------------------------------------- PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin #这是盲点，没想过要设，一次次的失望。［冒号分隔］ DISPLAY=:0.0 #加上吧，有冒号有句点。 # 分 钟 日 月 周 命令 1 23 1 8 * shutdown -h +3 #1月8日23点1分关机(延时3分钟) 1,4,7 23 1 8 * # 1分，4分，7分[1月8日23点] */3 23 1 8 * # 0,3,6,9...每隔3分钟（或每过3分钟，与每3分钟有点不同） [1-10]/3 23 1 8 * # 1分，4分，7分[从1分起，逐次加3分钟，直到大于10==>这是 正确解法] ＠reboot shutdown -k now #这行能把你吓坏，一开机就关机（要是把"-k"换成"-h"的话）。 "@reboot"表示启动时执行。 ---------------------------------END-------------------------------------------- 另一个脚本： ******************************************************************************* [0-59]/5 23 * * * shutdown -h now #每天晚上11点每隔5分钟关一次机，愿望很好，但是将不会执行，因为没设PATH变量，解决方法见下行。 [0-59]/5 23 * * * /sbin/shutdown -h now #保证关得很死，给出了路径。 0 6 1 8 * xmms /music/zhangchu/轻取.mp3 #明天早上6点钟放首歌叫我。但睡到7点钟还是没听到音乐，伤心失望。[DISPLAY=:0.0]。对本行的最后一点补充：现今99%主板都支持定时开机，没有闹钟的话可以叫电脑叫醒你，选项在BIOS电源里面［wake up by alarm]。 *********************************END******************************************* 可以自由修改，最初发布于Linuxsir网站。 
+crontab的正确用法(简短节省大家时间)命令： 1 man cron 2 man crontab 3 man 5 crontab ==> 中间有个5。命令"crontab -e": --------------------------------------------------------------------------------
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin #这是盲点，没想过要设，一次次的失望。［冒号分隔］ DISPLAY=:0.0 #加上吧，有冒号有句点。 
+# 分 钟 日 月 周 命令 1 23 1 8 * shutdown -h +3 #1月8日23点1分关机(延时3分钟) 1,4,7 23 1 8 * # 1分，4分，7分[1月8日23点] */3 23 1 8 * # 0,3,6,9...每隔3分钟（或每过3分钟，与每3分钟有点不同） 
+[1-10]/3 23 1 8 * # 1分，4分，7分[从1分起，逐次加3分钟，直到大于10==>这是 正确解法] ＠reboot shutdown -k now #这行能把你吓坏，一开机就关机（要是把"-k"换成"-h"的话）。 "@reboot"表示启动时执行。
+---------------------------------END-------------------------------------------- 
+另一个脚本： ******************************************************************************* [0-59]/5 23 * * * shutdown -h now #每天晚上11点每隔5分钟关一次机，愿望很好，但是将不会执行，因为没设PATH变量，解决方法见下行。
+[0-59]/5 23 * * * /sbin/shutdown -h now #保证关得很死，给出了路径。 0 6 1 8 * xmms /music/zhangchu/轻取.mp3 #明天早上6点钟放首歌叫我。但睡到7点钟还是没听到音乐，伤心失望。[DISPLAY=:0.0]。对本行的最后一点补充：
+现今99%主板都支持定时开机，没有闹钟的话可以叫电脑叫醒你，选项在BIOS电源里面［wake up by alarm]。 *********************************END******************************************* 可以自由修改，最初发布于Linuxsir网站。 
 我们来看一个超级用户的crontab文件：
  　　#Run the ‘atrun' program every minutes 　　#This runs anything that's due to run from ‘at'.See man ‘at' or ‘atrun'. 　　0,5,10,15,20,25,30,35,40,45,50,55 * * * * /usr/lib/atrun 　　40 7 * * * updatedb 　　8,10,22,30,39,46,54,58 * * * * /bin/sync 
