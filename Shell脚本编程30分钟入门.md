@@ -1,2 +1,2 @@
- - [Shell脚本编程30分钟入门]（https://github.com/qinjx/30min_guides/blob/master/shell.md）
- - [Unix Shell Programming](http://www.tutorialspoint.com/unix/unix-shell.htm)
+ - [Shell脚本编程30分钟入门](https://github.com/qinjx/30min_guides/blob/master/shell.md)
+ 
