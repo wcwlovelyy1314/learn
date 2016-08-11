@@ -1,3 +1,4 @@
+```javascript
 db.V_SZB_MZXX.aggregate(
   [
   {
@@ -11,3 +12,4 @@ db.V_SZB_MZXX.aggregate(
   ]);
   等价与
   select count(*),jzid from V_SZB_MZXX group by jzid having count(*)>1;
+  ```
