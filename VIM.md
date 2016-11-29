@@ -31,3 +31,4 @@
 
     在命令模式下，将光标移动到将要粘贴的行处，按“p”进行粘贴
 ```
+[VIM学习地址](http://coolshell.cn/articles/5426.html)
